@@ -103,11 +103,11 @@ public class MainController implements Initializable {
 		    long dateUnix = rootobj.get("dt").getAsLong();
 		    Date date = new Date ();
 		    date.setTime((long)sunriseUnix*1000);
-		    sunrise.setText(date.toString());
+		    sunrise.setText(fixTime(date.toString()));
 		    date.setTime((long)sunsetUnix*1000);
-		    sunset.setText(date.toString());
+		    sunset.setText(fixTime(date.toString()));
 		    date.setTime((long)dateUnix*1000);
-		    dateLabel.setText(date.toString());
+		    dateLabel.setText("	" + fixTime(date.toString()));
 		    
 		    String imageUrl = "http://openweathermap.org/img/w/";
 		    imageUrl = new StringBuilder(imageUrl).append(weatherr.get("icon").getAsString()+ ".png").toString();
@@ -149,5 +149,10 @@ public class MainController implements Initializable {
 		alert.setContentText(text);
 
 		alert.showAndWait();
+    }
+    String fixTime(String time) {
+    		time = new StringBuilder(time).delete(0, 11).toString();
+    		time = new StringBuilder(time).delete(7, 16).toString();
+    		return time;
     }
 }
