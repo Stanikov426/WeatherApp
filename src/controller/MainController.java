@@ -1,10 +1,12 @@
 package controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+
+import java.net.*;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -125,7 +127,15 @@ public class MainController implements Initializable {
 		    //test.setText("Nazwa miasta " + rootobj.get("name").getAsString() + " pogoda "+ weatherr.get("main").getAsString() +  " temperatura to " + Integer.valueOf(temp).toString() + "C");
     	}
     	else if(choiceBox.getValue()=="Search by your location*") {
-    		alert("Not ready yet...");
+    		String ip = null;
+    		try {
+				ip = getPublicIp();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		
+    		System.out.println(ip);
     	}
     	else {
     		alert("Choose something, pls....");
@@ -154,5 +164,18 @@ public class MainController implements Initializable {
     		time = new StringBuilder(time).delete(0, 11).toString();
     		time = new StringBuilder(time).delete(7, 16).toString();
     		return time;
+    }
+    String getPublicIp() throws IOException {
+    		URL whatismyip = null;
+    		String ip = null;
+			try {
+				whatismyip = new URL("http://checkip.amazonaws.com");
+				BufferedReader in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
+	    			ip = in.readLine(); //you get the IP as a String
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		return ip;
     }
 }
