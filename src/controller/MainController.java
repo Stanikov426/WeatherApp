@@ -1,12 +1,15 @@
 package controller;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.net.*;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -14,6 +17,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -69,6 +74,9 @@ public class MainController implements Initializable {
     private TextField cityText;
 
     @FXML
+    private Button pdfButton;
+    
+    @FXML
     private Button checkButton;
 
     @FXML
@@ -110,6 +118,18 @@ public class MainController implements Initializable {
     	}
     	else {
     		alert("Choose something, pls....");
+    	}
+    }
+    
+	@FXML
+    void pdfClick(ActionEvent event) throws FileNotFoundException, DocumentException{
+    	if(top.getText()=="") {
+    		alert("You need to find weather!");
+    	}
+    	else {
+    		String name = top.getText().substring(11);
+    		Date data = new Date();
+    		pdf(name, data);
     	}
     }
     
@@ -203,5 +223,20 @@ public class MainController implements Initializable {
 	    cloud.setText(rootobj.get("clouds").getAsJsonObject().get("all").getAsString()+"%");
 	    pressure.setText(main.get("pressure").getAsString()+"hPA");
 	    humidity.setText(main.get("humidity").getAsString()+"%");
+    }
+    void pdf(String name, Date date) throws DocumentException, FileNotFoundException {
+    	Calendar cal = Calendar.getInstance();
+    	cal.setTime(date);
+    	Document document = new Document();
+    	PdfWriter.getInstance(document, new FileOutputStream(name + cal.get(Calendar.DAY_OF_MONTH) + "." + cal.get(Calendar.YEAR) + ".pdf"));
+    	 
+    	document.open();
+    	Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
+    	Chunk chunk = new Chunk("Weather in "+ name, font);
+    	Paragraph paragraph = new Paragraph("Temp: " + tempLabel.getText() + "  Weather status: " + weatherLabel.getText() + "wind speed: " + wind.getText() +" and clouds: "+ cloud.getText());
+    	 
+    	document.add(chunk);
+    	document.add(paragraph);
+    	document.close();
     }
 }
